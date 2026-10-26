@@ -1,0 +1,10 @@
+{
+  "name": "Tetris 500 Level",
+  "short_name": "Tetris 500",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0c0f2e",
+  "theme_color": "#0c0f2e"
+}
