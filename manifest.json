@@ -1,7 +1,7 @@
 {
-  "name": "Tetris 500 Level",
-  "short_name": "Tetris 500",
-  "description": "Game Tetris 500 level dengan lima tema latar.",
+  "name": "Blok Puzzle 500 Level",
+  "short_name": "Blok 500",
+  "description": "Game puzzle menyusun blok dengan 500 level, lima tema latar, dan tantangan yang makin sulit.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
