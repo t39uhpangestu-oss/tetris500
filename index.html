@@ -42,6 +42,7 @@
     <div id="baris1">
       <span>Level <b id="lvl">1</b>/500</span>
       <span>Skor <b id="skorLevel">0</b>/2000</span>
+      <button id="btnSuara">🔊</button>
       <button id="btnMenu">Menu</button>
     </div>
     <div id="bar"><div id="isi"></div></div>
@@ -309,9 +310,9 @@ function kunci() {
   aktif.m.forEach((row, r) => row.forEach((v, c) => {
     if (v && aktif.y + r >= 0) papan[aktif.y + r][aktif.x + c] = aktif.warna;
   }));
-
+SUARA.kunci();
   const n = hapusBaris();
-  if (n) {
+  if (n) { SUARA.baris();
     const tambah = [0, 100, 300, 500, 800][n];
     skorLevel += tambah; skorTotal += tambah;
   }
@@ -328,6 +329,7 @@ function naikLevel() {
   skorLevel -= SKOR_PER_LEVEL;      // sisa skor dibawa ke level berikutnya
   if (level >= MAKS_LEVEL) { akhirGame(true); return; }
   level++;
+  SUARA.level();
   tambahTantangan(level);
 }
 
@@ -468,7 +470,8 @@ function mulai(t) {
   pesan('Mulai! Kumpulkan 2000 skor untuk naik level', 2000);
 }
 
-function akhirGame(menang) {
+  function akhirGame(menang) {
+    if (!menang) SUARA.kalah();
   kalah = true;
   clearTimeout(timer);
   document.getElementById('judulAkhir').textContent = menang ? 'Tamat! 500 level selesai' : 'Game Over';
@@ -502,6 +505,38 @@ document.getElementById('btnUlang').onclick = () => {
 };
 
 buatMenu();
+  // ===== SUARA =====
+let suaraAktif = true;
+let ac = null;
+
+function bunyi(frek, durasi, tipe = 'square', vol = 0.08) {
+  if (!suaraAktif) return;
+  try {
+    if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ac.createOscillator();
+    const g = ac.createGain();
+    o.type = tipe;
+    o.frequency.value = frek;
+    g.gain.value = vol;
+    o.connect(g);
+    g.connect(ac.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + durasi);
+    o.stop(ac.currentTime + durasi);
+  } catch (e) {}
+}
+
+const SUARA = {
+  kunci: () => bunyi(180, 0.12, 'sawtooth', 0.1),
+  baris: () => { bunyi(660, 0.1); setTimeout(() => bunyi(880, 0.15), 90); },
+  level: () => [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => bunyi(f, 0.18, 'triangle', 0.1), i * 120)),
+  kalah: () => [400, 300, 200].forEach((f, i) => setTimeout(() => bunyi(f, 0.3, 'sawtooth', 0.08), i * 200))
+};
+
+document.getElementById('btnSuara').onclick = () => {
+  suaraAktif = !suaraAktif;
+  document.getElementById('btnSuara').textContent = suaraAktif ? '🔊' : '🔇';
+};
 </script>
 </body>
 </html>
